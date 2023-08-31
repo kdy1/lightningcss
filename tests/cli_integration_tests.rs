@@ -759,3 +759,33 @@ fn browserslist_environment_from_browserslist_env() -> Result<(), Box<dyn std::e
 
   Ok(())
 }
+
+fn swc_plugin_205_test_file() -> Result<assert_fs::NamedTempFile, FixtureError> {
+  let file: assert_fs::NamedTempFile = assert_fs::NamedTempFile::new("test.css")?;
+  file.write_str(
+    r#"
+      @media (max-width: 870px) {
+        :global(th.expiration-date-cell),
+        :global(td.expiration-date-cell) {
+          display: none;
+        }
+      }
+    "#,
+  )?;
+  Ok(file)
+}
+
+#[test]
+fn swc_plugin_205() -> Result<(), Box<dyn std::error::Error>> {
+  let infile = swc_plugin_205_test_file()?;
+  let outfile = assert_fs::NamedTempFile::new("test.out")?;
+  let mut cmd = Command::cargo_bin("lightningcss")?;
+  cmd.arg(infile.path());
+  cmd.arg("--output-file").arg(outfile.path());
+  cmd.assert().success();
+  outfile.assert(predicate::str::contains(indoc! {r#"
+        
+        "#}));
+
+  Ok(())
+}
