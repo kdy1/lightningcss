@@ -240,6 +240,9 @@ pub enum SelectorError<'i> {
   UnexpectedSelectorAfterPseudoElement(
     #[cfg_attr(any(feature = "serde", feature = "nodejs"), serde(skip))] Token<'i>,
   ),
+
+  /// A pseudo class or element is not allowed after a nesting selector.
+  PseudoAfterNesting(CowArcStr<'i>),
 }
 
 impl<'i> fmt::Display for SelectorError<'i> {

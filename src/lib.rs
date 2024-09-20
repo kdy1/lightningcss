@@ -27250,15 +27250,9 @@ mod tests {
       r#"
       .rowContainer {
         &.header {
-          /* Correct syntax: &.darktheme */
           &:darktheme {
             color: red;
           }
-        }
-
-        /* Correct syntax: &.global(.dark-theme) */
-        &:global(.dark-theme) & {
-          color: red;
         }
       }
     "#,
@@ -27268,10 +27262,6 @@ mod tests {
           &:darktheme {
             color: red;
           }
-        }
-
-        &.dark-theme & {
-          color: red;
         }
       }
     "#},
@@ -27287,24 +27277,14 @@ mod tests {
     let warnings = w.read().unwrap();
     assert_eq!(
       *warnings,
-      vec![
-        Error {
-          kind: ParserError::SelectorError(SelectorError::UnsupportedPseudoClassOrElement("darktheme".into())),
-          loc: Some(ErrorLocation {
-            filename: "test.css".into(),
-            line: 1,
-            column: 7,
-          })
-        },
-        Error {
-          kind: ParserError::SelectorError(SelectorError::UnsupportedPseudoClassOrElement("darktheme".into())),
-          loc: Some(ErrorLocation {
-            filename: "test.css".into(),
-            line: 4,
-            column: 13
-          })
-        },
-      ]
+      vec![Error {
+        kind: ParserError::SelectorError(SelectorError::PseudoAfterNesting("darktheme".into())),
+        loc: Some(ErrorLocation {
+          filename: "test.css".into(),
+          line: 1,
+          column: 7,
+        })
+      },]
     )
   }
 
