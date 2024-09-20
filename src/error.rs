@@ -275,6 +275,7 @@ impl<'i> fmt::Display for SelectorError<'i> {
           "Pseudo-elements like '::before' or '::after' can't be followed by selectors like '{token:?}'"
         )
       },
+      PseudoAfterNesting(name) => write!(f, "Pseudo class or element '{}' is not allowed after a nesting selector. Did you mean to use .{name} instead?", name),
     }
   }
 }
