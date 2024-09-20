@@ -27252,28 +27252,26 @@ mod tests {
         &.header {
           /* Correct syntax: &.darktheme */
           &:darktheme {
-            border-bottom-color: var(--accents-2);
+            color: red;
           }
         }
 
         /* Correct syntax: &.global(.dark-theme) */
         &:global(.dark-theme) & {
-          background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+          color: red;
         }
       }
     "#,
       indoc! { r#"
-      .rowContainer {
-        &.header {
-          /* Correct syntax: &.darktheme */
+      .EgL3uq_rowContainer {
+        &.EgL3uq_header {
           &:darktheme {
-            border-bottom-color: var(--accents-2);
+            color: red;
           }
         }
 
-        /* Correct syntax: &.global(.dark-theme) */
-        &:global(.dark-theme) & {
-          background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+        &.dark-theme & {
+          color: red;
         }
       }
     "#},
