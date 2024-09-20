@@ -27289,19 +27289,19 @@ mod tests {
       *warnings,
       vec![
         Error {
-          kind: ParserError::SelectorError(SelectorError::UnsupportedPseudoClassOrElement("dark-theme".into())),
+          kind: ParserError::SelectorError(SelectorError::UnsupportedPseudoClassOrElement("darktheme".into())),
           loc: Some(ErrorLocation {
             filename: "test.css".into(),
             line: 1,
-            column: 7
+            column: 7,
           })
         },
         Error {
-          kind: ParserError::SelectorError(SelectorError::UnsupportedPseudoClassOrElement("dark-theme".into())),
+          kind: ParserError::SelectorError(SelectorError::UnsupportedPseudoClassOrElement("darktheme".into())),
           loc: Some(ErrorLocation {
             filename: "test.css".into(),
-            line: 1,
-            column: 7
+            line: 4,
+            column: 13
           })
         },
       ]
