@@ -27243,6 +27243,74 @@ mod tests {
   }
 
   #[test]
+  fn test_error_recovery_module() {
+    use std::sync::{Arc, RwLock};
+    let warnings = Some(Arc::new(RwLock::new(Vec::new())));
+    test_with_options(
+      r#"
+      .rowContainer {
+        &.header {
+          /* Correct syntax: &.darktheme */
+          &:darktheme {
+            border-bottom-color: var(--accents-2);
+          }
+        }
+
+        /* Correct syntax: &.global(.dark-theme) */
+        &:global(.dark-theme) & {
+          background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+        }
+      }
+    "#,
+      indoc! { r#"
+      .rowContainer {
+        &.header {
+          /* Correct syntax: &.darktheme */
+          &:darktheme {
+            border-bottom-color: var(--accents-2);
+          }
+        }
+
+        /* Correct syntax: &.global(.dark-theme) */
+        &:global(.dark-theme) & {
+          background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+        }
+      }
+    "#},
+      ParserOptions {
+        filename: "test.css".into(),
+        error_recovery: true,
+        warnings: warnings.clone(),
+        css_modules: Some(Default::default()),
+        ..ParserOptions::default()
+      },
+    );
+    let w = warnings.unwrap();
+    let warnings = w.read().unwrap();
+    assert_eq!(
+      *warnings,
+      vec![
+        Error {
+          kind: ParserError::SelectorError(SelectorError::UnsupportedPseudoClassOrElement("dark-theme".into())),
+          loc: Some(ErrorLocation {
+            filename: "test.css".into(),
+            line: 1,
+            column: 7
+          })
+        },
+        Error {
+          kind: ParserError::SelectorError(SelectorError::UnsupportedPseudoClassOrElement("dark-theme".into())),
+          loc: Some(ErrorLocation {
+            filename: "test.css".into(),
+            line: 1,
+            column: 7
+          })
+        },
+      ]
+    )
+  }
+
+  #[test]
   fn test_invalid() {
     error_test(
       ".a{color: hsla(120, 62.32%;}",
